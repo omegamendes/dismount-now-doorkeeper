@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"os"
 	"os/signal"
 	"strings"
@@ -76,6 +78,19 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 		//Need to go into albion online api and look for ig name and guild name.
 		s.GuildMemberNickname(c.GuildID, usr.ID, "")
+
+		var inGame = strings.Split(m.Content, " ")
+
+		response, err := http.Get("https://gameinfo.albiononline.com/api/gameinfo/search?q=" + inGame[1])
+
+		responseData, err := ioutil.ReadAll(response.Body)
+
+		if err != nil {
+			fmt.Print(err.Error())
+			os.Exit(1)
+		}
+
+		fmt.Println(string(responseData))
 
 	}
 
